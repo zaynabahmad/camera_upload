@@ -22,7 +22,7 @@ output_frame = None
 lock = threading.Lock()
 
 # Initialize the Raspberry Pi camera
-camera = PiCamera()
+camera = Picamera2()
 
 def capture_and_upload():
     global output_frame, lock
