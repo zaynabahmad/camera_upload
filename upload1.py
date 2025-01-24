@@ -33,7 +33,7 @@ def capture_and_upload():
         local_path = f"/tmp/{image_filename}"
 
         # Capture an image and save it locally
-        camera.capture(local_path)
+        camera.capture_file(local_path)
         print(f"Image captured locally: {local_path}")
 
         # Upload to S3
