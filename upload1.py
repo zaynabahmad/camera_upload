@@ -9,9 +9,9 @@ from datetime import datetime
 app = Flask(__name__)
 
 # AWS S3 configuration
-AWS_ACCESS_KEY = "your-access-key"
-AWS_SECRET_KEY = "your-secret-key"
-BUCKET_NAME = "your-s3-bucket-name"
+AWS_ACCESS_KEY = "AKIARWPFIGTLOJITWPXH"
+AWS_SECRET_KEY = "GKmHXnUHzDnhj5xU8bYuR6ALVjKmH6JlVPfPmDKL"
+BUCKET_NAME = "camera-images"
 FOLDER_NAME = "raspberry-camera-images"
 
 # Initialize S3 client
@@ -41,7 +41,7 @@ def capture_and_upload():
         # Save the frame as an image file
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         image_filename = f"image_{timestamp}.jpg"
-        local_path = f"/tmp/{image_filename}"
+        local_path = f"/{image_filename}"
 
         # Save locally
         cv2.imwrite(local_path, frame)
