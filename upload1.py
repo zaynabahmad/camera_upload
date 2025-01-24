@@ -3,7 +3,7 @@ import os
 from flask import Flask, render_template, Response
 import threading
 import time
-from picamera import PiCamera
+from picamera2 import PiCamera2
 from datetime import datetime
 
 app = Flask(__name__)
