@@ -1,17 +1,17 @@
-import cv2
 import boto3
 import os
 from flask import Flask, render_template, Response
 import threading
 import time
+from picamera2 import Picamera2
 from datetime import datetime
 
 app = Flask(__name__)
-
+# picamera
 # AWS S3 configuration
-AWS_ACCESS_KEY = "your-access-key"
-AWS_SECRET_KEY = "your-secret-key"
-BUCKET_NAME = "your-s3-bucket-name"
+AWS_ACCESS_KEY = "AKIARWPFIGTLOJITWPXH"
+AWS_SECRET_KEY = "GKmHXnUHzDnhj5xU8bYuR6ALVjKmH6JlVPfPmDKL"
+BUCKET_NAME = "camera-imagess"
 FOLDER_NAME = "raspberry-camera-images"
 
 # Initialize S3 client
@@ -22,30 +22,19 @@ output_frame = None
 lock = threading.Lock()
 
 # Initialize the Raspberry Pi camera
-cap = cv2.VideoCapture(0)
-cap.set(3, 640)  # Set width
-cap.set(4, 480)  # Set height
+camera = Picamera2()
 
 def capture_and_upload():
     global output_frame, lock
     while True:
-        ret, frame = cap.read()
-        if not ret:
-            print("Failed to capture frame")
-            break
-
-        # Lock the frame for thread-safe access
-        with lock:
-            output_frame = frame
-
-        # Save the frame as an image file
+        # Capture image using PiCamera
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         image_filename = f"image_{timestamp}.jpg"
         local_path = f"/tmp/{image_filename}"
 
-        # Save locally
-        cv2.imwrite(local_path, frame)
-        print(f"Image saved locally: {local_path}")
+        # Capture an image and save it locally
+        camera.capture_file(local_path)
+        print(f"Image captured locally: {local_path}")
 
         # Upload to S3
         try:
@@ -66,7 +55,6 @@ def generate():
     while True:
         if output_frame is not None:
             with lock:
-                # Encode the frame as JPEG
                 ret, jpeg = cv2.imencode('.jpg', output_frame)
                 if ret:
                     frame = jpeg.tobytes()
