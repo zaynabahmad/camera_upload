@@ -26,7 +26,7 @@ os.makedirs(local_folder, exist_ok=True)  # Create the directory if it doesn't e
 
 def capture_and_upload():
     while True:
-        # Capture image using PiCamera
+        # Generate a unique filename with timestamp
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         image_filename = f"image_{timestamp}.jpg"
         local_path = os.path.join(local_folder, image_filename)
@@ -34,20 +34,20 @@ def capture_and_upload():
         # Capture an image and save it locally
         try:
             camera.capture_file(local_path)
-            print(f"Image captured locally: {local_path}")
+            print(f"[INFO] Image captured and saved locally: {local_path}")
         except Exception as e:
-            print(f"Failed to capture image: {e}")
+            print(f"[ERROR] Failed to capture image: {e}")
             continue
 
         # Upload to S3
         try:
             s3.upload_file(local_path, BUCKET_NAME, f"{FOLDER_NAME}/{image_filename}")
-            print(f"Uploaded {image_filename} to S3")
+            print(f"[INFO] Image uploaded to S3: {image_filename}")
         except Exception as e:
-            print(f"Failed to upload {image_filename} to S3: {e}")
+            print(f"[ERROR] Failed to upload image to S3: {e}")
 
-        # Sleep to control the upload interval (e.g., one image every 10 seconds)
-        time.sleep(10)
+        # Sleep for 2 seconds before capturing the next image
+        time.sleep(2)
 
 @app.route('/')
 def index():
